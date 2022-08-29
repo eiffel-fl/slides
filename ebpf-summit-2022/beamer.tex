@@ -1,0 +1,225 @@
+\newif \ifshare
+% \sharetrue % Comment this if you want animation
+\ifshare % "Share mode" without animation.
+\documentclass[table, trans, aspectratio = 169]{beamer}
+\else % "Presentation mode" with animation.
+\documentclass[table, aspectratio = 169]{beamer}
+\fi
+\usepackage{default}
+\usepackage[T1]{fontenc}
+\usepackage{color}
+\usepackage{graphicx}
+\usepackage{subfig}
+\usepackage{diagbox}
+\usepackage{minted}
+\usepackage{fancyvrb}
+
+
+\let\pgfmathMod=\pgfmathmod\relax
+
+\graphicspath{{../figs/PDF/}}
+
+\usetheme{Boadilla}
+
+\definecolor{struct}{HTML}{03a9f4}
+\definecolor{alert}{HTML}{f44336}
+\definecolor{example}{HTML}{aeea00}
+\definecolor{good}{HTML}{8bc34a}
+\definecolor{notgoodnotbad}{HTML}{ff9800}
+
+\setbeamercolor{structure}{fg = struct}
+\setbeamercolor{normal text}{fg = white, bg = black}
+\setbeamercolor{example text}{fg = example}
+\setbeamercolor{alerted text}{fg = alert}
+\setbeamercolor{footline}{fg = white}
+
+\title[eBPF summit 2022]{Porting eBPF CO-RE to arm64 Leads to Fix the Kernel}
+\subtitle{eBPF summit 2022}
+\author[Francis Laniel (\texttt{flaniel@linux.microsoft.com})]{Francis Laniel\\\texttt{flaniel@linux.microsoft.com}}
+\date{29th September 2022}
+
+% Custom title page.
+\defbeamertemplate*{title page}{customized}[1][]{
+	\centering
+	\usebeamerfont{title}\usebeamercolor[fg]{title}\inserttitle\par
+	\usebeamerfont{subtitle}\usebeamercolor[fg]{subtitle}\insertsubtitle\par
+	\bigskip
+	\usebeamerfont{author}\usebeamercolor[fg]{normal text}\textbf{\insertauthor}\par
+	\bigskip
+	\usebeamerfont{date}\usebeamercolor[fg]{normal text}\textbf{\insertdate}\par
+	\bigskip
+	\bigskip
+
+	\begin{columns}
+		\begin{column}{.5\textwidth}
+			\centering
+
+			\includegraphics[scale=2]{microsoft.pdf}
+		\end{column}
+		\begin{column}{.5\textwidth}
+			\centering
+
+			\includegraphics{kinvolk.pdf}
+		\end{column}
+	\end{columns}
+}
+
+\begin{document}
+	% Put these parameters here to avoid compilation error:
+	% "! LaTeX Error: Missing \begin{document}."
+	% Remove the navigation bar, this is useless...
+	\setbeamertemplate{navigation symbols}{}
+	% Use square instead of bubbles, see:
+	% https://tex.stackexchange.com/a/69721
+	\setbeamertemplate{section in toc}[square]
+	% Modify the shaded value to 60% instead of 20%, see:
+	% https://tex.stackexchange.com/a/66703
+	\setbeamertemplate{sections/subsections in toc shaded}[default][50]
+	% Use circle instead of bubbles for itemize, see:
+	% \setbeamertemplate{itemize items}[circle]
+	\setbeamertemplate{itemize items}[square]
+	\setbeamertemplate{enumerate items}[square]
+
+	\maketitle
+
+	\section{\texttt{bpf2go}}
+	\begin{frame}
+		\frametitle{\texttt{bpf2go}}
+		\framesubtitle{What it is?}
+
+		\texttt{bpf2go} enables you to \cite{cilium_contributors_bpf2go_nodate}:
+		\begin{quote}
+			[compile] a C source file into eBPF bytecode and then emits a Go file containing the eBPF.
+		\end{quote}
+
+		\bigskip
+
+		\onslide<2>{
+			It permits you to generate eBPF bytecode for several architectures, by calling \texttt{clang}, like \cite{cilium_contributors_bpf2go_nodate-1}:
+			\begin{itemize}
+				\item \texttt{amd64}
+				\item \textcolor{struct}{\texttt{arm64}}
+			\end{itemize}
+		}
+	\end{frame}
+
+	\section{Problem and context}
+	\begin{frame}[fragile]
+		\frametitle{Problem and context}
+
+		\begin{columns}
+			\begin{column}{.5\textwidth}
+				\centering
+
+				\includegraphics[scale = .33]{inspektor_gadget.pdf}
+			\end{column}
+			\begin{column}{.5\textwidth}
+				\centering
+
+				\includegraphics[scale = .33]{arm.pdf}
+			\end{column}
+		\end{columns}
+
+		\bigskip
+
+		\begin{onlyenv}<2->
+			\centering
+
+			\begin{verbatim}
+# Francis uses execsnoop!
+$ ./kubectl-gadget trace exec -A
+NODE NAMESPACE POD CONTAINER PID PPID PCOMM RET ARGS
+# But nothing happened!
+			\end{verbatim}
+		\end{onlyenv}
+	\end{frame}
+
+	\section{Contribution}
+	\begin{frame}
+		\frametitle{Contribution}
+		\framesubtitle{Investigate the root cause}
+
+		\centering
+
+		% Only sys_exit is not reported.
+		% The problem occurs with execsnoop bcc, perf, etc.
+
+		\includegraphics<1>[scale=.33]{exec_trace_calls-fig1.pdf}%
+		\includegraphics<2>[scale=.33]{exec_trace_calls-fig2.pdf}%
+		\includegraphics<3>[scale=.33]{exec_trace_calls-fig3.pdf}%
+	\end{frame}
+
+	\begin{frame}[fragile]
+		\frametitle{Contribution}
+		\framesubtitle{Upstream bug fix and workaround for older kernels}
+
+		\begin{columns}
+			\begin{column}{.5\textwidth}
+				\centering
+				Upstream fix \cite{linux_kernel_contributors_arm64_2022}:
+				\begin{tiny}
+					\begin{minted}[breaklines]{diff}
+--- a/arch/arm64/include/asm/processor.h
++++ b/arch/arm64/include/asm/processor.h
+@@ -272,8 +272,9 @@ void tls_preserve_current_state(void);
+
+ static inline void start_thread_common(struct pt_regs *regs, unsigned long pc)
+ {
++	s32 previous_syscall = regs->syscallno;
+ 	memset(regs, 0, sizeof(*regs));
+-	forget_syscall(regs);
++	regs->syscallno = previous_syscall;
+ 	regs->pc = pc;
+
+ 	if (system_uses_irq_prio_masking())
+					\end{minted}
+				\end{tiny}
+			\end{column}
+			\begin{column}{.5\textwidth}<2->
+				\centering
+				Use \texttt{kprobe} for older kernels \cite{inspektor_gadget_contributors_pkggadgets_2022}:
+				\begin{itemize}
+					\item[\checkmark] Permits running \texttt{execsnoop}
+					\item[$\times$] Arguments will not be traced
+				\end{itemize}
+			\end{column}
+		\end{columns}
+
+	\end{frame}
+
+	\section{Conclusion and future work}
+	\begin{frame}
+		\frametitle{Conclusion and future work}
+
+		Conclusion:
+		\begin{enumerate}
+			\item Kernel bug was fixed and backported to stable ones, so you can now trace \texttt{execve} syscall family on \texttt{arm64} \cite{linux_kernel_contributors_arm64_2022, levin_patch_2022}.
+			\item Inspektor Gadget was ported on \texttt{arm64} \cite{inspektor_gadget_contributors_add_2022}.
+		\end{enumerate}
+
+		\bigskip
+
+		\onslide<2->{
+			Future work:
+			\begin{enumerate}
+				\item Test Inspektor Gadget \texttt{arm64} port on several platforms.
+			\end{enumerate}
+		}
+
+		\bigskip
+
+		\onslide<3->{
+			Thanks to Jeremi Piotrowski for his help finding this kernel bug!
+		}
+	\end{frame}
+
+	\begin{frame}[allowframebreaks, noframenumbering]
+		\frametitle{Bibliography}
+		\setbeamertemplate{bibliography item}[text]
+
+		\begin{scriptsize}
+			\bibliographystyle{IEEEtran}
+			\bibliography{beamer}
+		\end{scriptsize}
+	\end{frame}
+\end{document}
