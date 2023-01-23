@@ -24,7 +24,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -186,12 +186,12 @@
      showgrid="false"
      inkscape:pagecheckerboard="true"
      inkscape:zoom="1.1019081"
-     inkscape:cx="441.66584"
-     inkscape:cy="255.18298"
+     inkscape:cx="293.74062"
+     inkscape:cy="247.92285"
      inkscape:window-x="0"
      inkscape:window-y="0"
      inkscape:window-maximized="1"
-     inkscape:current-layer="layer12"
+     inkscape:current-layer="layer5"
      fit-margin-top="0"
      fit-margin-left="0"
      fit-margin-right="0"
@@ -559,7 +559,7 @@
          sodipodi:role="line"
          id="tspan2255"
          x="639.34552"
-         y="313.21518"></tspan></text>
+         y="313.21518" /></text>
   </g>
   <g
      inkscape:groupmode="layer"
@@ -628,7 +628,7 @@
          x="647.4447"
          y="360.10263"
          id="tspan1596"
-         style="font-size:18.66666603px">BPF program</tspan></text>
+         style="font-size:18.66666603px">eBPF program</tspan></text>
     <path
        style="fill:none;stroke:#ffffff;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#marker1614)"
        d="m 599.35828,247.37968 128.75131,73.74515"

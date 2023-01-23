@@ -263,9 +263,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="1.4"
-     inkscape:cx="395.60211"
-     inkscape:cy="85.618247"
+     inkscape:zoom="7.9195959"
+     inkscape:cx="266.88082"
+     inkscape:cy="204.10961"
      inkscape:document-units="mm"
      inkscape:current-layer="layer3"
      showgrid="false"
@@ -869,8 +869,7 @@
      id="layer3"
      inkscape:label="runtime-fig[3-]"
      style="display:inline"
-     transform="translate(-20.169068,-49.551009)"
-     sodipodi:insensitive="true">
+     transform="translate(-20.169068,-49.551009)">
     <rect
        y="108.38108"
        x="73.073929"
@@ -973,7 +972,7 @@
     <g
        style="display:inline"
        id="g1204"
-       transform="matrix(0.01049868,0,0,0.01049868,78.440374,108.18678)">
+       transform="matrix(0.01049868,0,0,0.01049868,78.440374,108.18677)">
       <path
          id="path1192"
          d="m 306.89,419.99 c -28.22,-54.27 -1.41,-99.12 -1.41,-99.12 l -10.73,-15.03 0.01,-0.02 -0.03,-0.01 -0.05,-0.07 -0.03,0.04 -17.45,-6.06 c 0,0 -35.48,38.37 -95.5,26.57 -15.65,40.74 -16.15,64.29 19.62,104.17 v 0.01 c 0.01,0 0.01,0.01 0.02,0.01 0.02,0.02 0.04,0.05 0.06,0.07 l 0.02,-0.03 c 48.34,23.08 70.79,15.97 105.47,-10.53 z"
@@ -1011,15 +1010,15 @@
     </g>
     <text
        id="text2467"
-       y="112.62028"
-       x="104.34269"
+       y="112.63261"
+       x="84.999557"
        style="font-style:normal;font-weight:normal;font-size:10.58333302px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
        xml:space="preserve"><tspan
          style="font-size:4.93888903px;fill:#000000;stroke-width:0.26458332"
-         y="112.62028"
-         x="104.34269"
+         y="112.63261"
+         x="84.999557"
          id="tspan2465"
-         sodipodi:role="line">Go Library</tspan></text>
+         sodipodi:role="line">Library (libbpf, cilium/ebpf)</tspan></text>
     <path
        style="fill:none;stroke:#ffffff;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#marker2514)"
        d="M 115.9442,93.176338 V 107.96465"
