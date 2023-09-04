@@ -26,6 +26,7 @@ be visible on all pictures expect the 7th.
 """
 import argparse
 from shutil import which
+from packaging import version
 import sys
 import xml.etree.ElementTree as ET
 import subprocess
@@ -37,12 +38,21 @@ import copy
 # Inkscape program name.
 INKSCAPE = 'inkscape'
 
+# This script is not compatible with inkscape version older than 1.1.2.
+MINIMAL_VERSION = version.parse('1.1.2')
+
+DEBUG_INFO_ACTION = 'debug-info'
+FILE_OPEN_ACTION = 'file-open'
+EXPORT_AREA_DRAWING_ACTION = 'export-area-drawing'
+EXPORT_FILENAME_ACTION = 'export-filename'
+EXPORT_DO_ACTION = 'export-do'
+FILE_CLOSE_ACTION = 'file-close'
+
 # Inkscape options that this script uses.
 # See inkscape manual for more information.
 SHELL_OPTION = '--shell'
-AREA_DRAWING_OPTION = '--export-area-drawing'
-WITHOUT_GUI_OPTION = '--without-gui'
-EXPORT_PDF_OPTION = '--export-pdf'
+AREA_DRAWING_OPTION = f"--{EXPORT_AREA_DRAWING_ACTION}"
+EXPORT_FILENAME_OPTION = f"--{EXPORT_FILENAME_ACTION}"
 
 # To exit inkscape shell just type 'quit'.
 QUIT = 'quit\n'
@@ -125,7 +135,7 @@ def get_label_max_fig_number(label):
 		# If there is an error now, this is a "chair-keyboard" one.
 		numbers = list(map(int, numbers))
 	except ValueError as ve:
-		sys.exit('The figure label is malformed: {}.\nUse --help option to see how to format them.\nThe received exception was:\n{}'.format(label, traceback.format_exc()))
+		sys.exit(f"The figure label is malformed: {label}.\nUse --help option to see how to format them.\nThe received exception was:\n{traceback.format_exc()}")
 
 	# Finally, we return the max of these int.
 	return max(numbers)
@@ -191,7 +201,7 @@ def include_number(label, number, last_number):
 		submatch = re.search('(\d+)?(-?)(\d+)?', x)
 
 		if not submatch:
-			print("I have good reasons to think your layer's label is badly formatted, see if '{}' respects the naming rules (use script with --help)\nI will ignore this and try to produce the figures anyway.".format(x), file = sys.stderr)
+			print(f"I have good reasons to think your layer's label is badly formatted, see if '{x}' respects the naming rules (use script with --help)\nI will ignore this and try to produce the figures anyway.", file = sys.stderr)
 
 			continue
 
@@ -212,7 +222,7 @@ def include_number(label, number, last_number):
 			first = 1
 
 			if not submatch.group(3):
-				print("I have good reasons to think your layer's label is badly formatted, see if '{}' respects the naming rules (use script with --help)\nI will ignore this and try to produce the figures anyway.".format(x), file = sys.stderr)
+				print(f"I have good reasons to think your layer's label is badly formatted, see if '{x}' respects the naming rules (use script with --help)\nI will ignore this and try to produce the figures anyway.", file = sys.stderr)
 
 				continue
 
@@ -309,7 +319,7 @@ def create_svgs(svg_filename, tree, root, last_number):
 				remove(processed_root, group)
 
 		# Create svg filename.
-		temp_file = '{}-fig{}.svg'.format(os.path.basename(name_without_extension(svg_filename)), number)
+		temp_file = f"{os.path.basename(name_without_extension(svg_filename))}-fig{number}.svg"
 
 		# Add it to returned list.
 		svgs.append(temp_file)
@@ -332,7 +342,7 @@ def name_to_pdf(filename):
 	:returns: The filename where extension was replaced by 'pdf'
 	:rtype: str.
 	"""
-	return '{}{}'.format(name_without_extension(filename), PDF_EXTENSION)
+	return f"{name_without_extension(filename)}{PDF_EXTENSION}"
 
 def create_pdf_filename(destination, svg):
 	"""Create a path with complete path and filename for a PDF file.
@@ -344,7 +354,7 @@ def create_pdf_filename(destination, svg):
 	:rtype: str.
 	"""
 	# os.path.basename on name_to_pdf avoid duplicating path in path.
-	return '{}/{}'.format(destination, os.path.basename(name_to_pdf(svg)))
+	return f"{destination}/{os.path.basename(name_to_pdf(svg))}"
 
 def inkscape(svg, destination, no_export_area_drawing):
 	"""Call inkscape to export SVG file to PDF
@@ -358,14 +368,14 @@ def inkscape(svg, destination, no_export_area_drawing):
 	:returns: The code returned by inkscape.
 	:rtype: int.
 	"""
-	# EXPORT_PDF_OPTION of inkscape need a file so we create PDF filename with
+	# EXPORT_FILENAME_OPTION of inkscape need a file so we create PDF filename with
 	# destination and svg.
 	pdf = create_pdf_filename(destination, svg)
 
 	if no_export_area_drawing:
-		args = [INKSCAPE, svg, WITHOUT_GUI_OPTION, EXPORT_PDF_OPTION, pdf]
+		args = [INKSCAPE, svg, EXPORT_FILENAME_OPTION, pdf]
 	else:
-		args = [INKSCAPE, svg, AREA_DRAWING_OPTION, WITHOUT_GUI_OPTION, EXPORT_PDF_OPTION, pdf]
+		args = [INKSCAPE, svg, AREA_DRAWING_OPTION, EXPORT_FILENAME_OPTION, pdf]
 
 	return subprocess.run(args).returncode
 
@@ -377,6 +387,22 @@ def start_inkscape():
 	# Open pipes for stdin, stdout and stderr and set bufsize to 0, so the writes
 	# to the pipes are done immediately.
 	return subprocess.Popen([INKSCAPE, SHELL_OPTION], bufsize = 0, stdin = subprocess.PIPE, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
+
+def get_version(inkscape):
+	inkscape.stdin.write(f'{DEBUG_INFO_ACTION}\n'.encode())
+
+	# Consume all lines until debug-info one.
+	while True:
+		line = inkscape.stdout.readline()
+		if DEBUG_INFO_ACTION in line.decode():
+			break
+
+	# The next one should contains version:
+	# Inkscape 1.1.2 (0a00cf5339, 2022-02-04)
+	line = inkscape.stdout.readline()
+	tokens = line.split()
+
+	return version.parse(tokens[1].decode())
 
 def convert(inkscape, svg, destination, no_export_area_drawing):
 	"""Convert SVG file to PDF by using inkscape subprocess.
@@ -393,14 +419,14 @@ def convert(inkscape, svg, destination, no_export_area_drawing):
 	moment.
 	:rtype: NoneType/int.
 	"""
-	# EXPORT_PDF_OPTION of inkscape need a file so we create PDF filename with
+	# EXPORT_FILENAME_OPTION of inkscape need a file so we create PDF filename with
 	# destination and svg.
 	pdf = create_pdf_filename(destination, svg)
 
 	if no_export_area_drawing:
-		args = "{} {} {} {}\n".format(svg, WITHOUT_GUI_OPTION, EXPORT_PDF_OPTION, pdf)
+		args = f"{FILE_OPEN_ACTION}: {svg}; {EXPORT_FILENAME_ACTION}: {pdf}; {EXPORT_DO_ACTION}; {FILE_CLOSE_ACTION}\n"
 	else:
-		args = "{} {} {} {} {}\n".format(svg, AREA_DRAWING_OPTION, WITHOUT_GUI_OPTION, EXPORT_PDF_OPTION, pdf)
+		args = f"{FILE_OPEN_ACTION}: {svg}; {EXPORT_AREA_DRAWING_ACTION}; {EXPORT_FILENAME_ACTION}: {pdf}; {EXPORT_DO_ACTION}; {FILE_CLOSE_ACTION}\n"
 
 	# Write the command to execute on inkscape stdin.
 	inkscape.stdin.write(args.encode())
@@ -445,7 +471,12 @@ def main():
 
 	# Check if inkscape is installed.
 	if not which(INKSCAPE):
-		sys.exit('{} must be installed for this script to work correctly.'.format(INKSCAPE))
+		sys.exit(f'{INKSCAPE} must be installed for this script to work correctly.')
+
+	inkscape_process = start_inkscape()
+	version = get_version(inkscape_process)
+	if version < MINIMAL_VERSION:
+		sys.exit(f'{INKSCAPE} version {version} is installed but this script needs version {MINIMAL_VERSION} or above.')
 
 	# Parse the svg file and get its root.
 	tree = ET.parse(args.svg)
@@ -464,15 +495,13 @@ def main():
 	# Create SVG files corresponding to figures.
 	svgs = create_svgs(args.svg, tree, root, last_picture_number)
 
-	inkscape_process = start_inkscape()
-
 	for svg in svgs:
-		vprint(args.verbose, "Convert {} to PDF".format(svg))
+		vprint(args.verbose, f"Convert {svg} to PDF")
 
 		ret = convert(inkscape_process, svg, args.destination, args.no_export_area_drawing)
 
 		if ret != None:
-			sys.exit('{} returns {} and should not have returned, there is surely an error!'.format(INKSCAPE, ret))
+			sys.exit(f"{INKSCAPE} returns {ret} and should not have returned, there is surely an error!")
 
 	ret = quit_inkscape(inkscape_process)
 
