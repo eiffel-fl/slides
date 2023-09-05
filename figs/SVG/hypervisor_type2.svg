@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   version="1.1"
+   id="svg920"
+   xml:space="preserve"
+   width="536.11615"
+   height="550.06708"
+   viewBox="0 0 536.11615 550.06708"
+   sodipodi:docname="hypervisor_type2.svg"
+   inkscape:version="1.1.2 (0a00cf5339, 2022-02-04)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/"><metadata
+     id="metadata926"><rdf:RDF><cc:Work
+         rdf:about=""><dc:format>image/svg+xml</dc:format><dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" /></cc:Work></rdf:RDF></metadata><defs
+     id="defs924" /><sodipodi:namedview
+     pagecolor="#000000"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1920"
+     inkscape:window-height="999"
+     id="namedview922"
+     showgrid="false"
+     inkscape:zoom="1.7161544"
+     inkscape:cx="168.39977"
+     inkscape:cy="217.92912"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="g930"
+     inkscape:pagecheckerboard="true" /><g
+     id="g928"
+     inkscape:groupmode="layer"
+     inkscape:label="virtual_machine"
+     transform="matrix(1.3333333,0,0,-1.3333333,0,550.0671)"><g
+   id="g930"><path
+   d="M 0,68.945 H 402.086 V 0 H 0 Z"
+   style="fill:#009688;fill-opacity:1;fill-rule:nonzero;stroke:none"
+   id="path932"
+   inkscape:connector-curvature="0" /><text
+   transform="matrix(1,0,0,-1,97.596289,23.287374)"
+   style="font-variant:normal;font-weight:normal;font-size:30px;font-family:'DejaVu Sans';-inkscape-font-specification:DejaVuSans;writing-mode:lr-tb;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none"
+   id="text936"
+   y="0"><tspan
+     x="0 8.8199997 27.809999 38.369999 50.699997 69.059998 84.659996 96.509995 108.84 127.82999 144.39 156.14999 175.14 186.89999"
+     y="0"
+     sodipodi:role="line"
+     id="tspan934">Infrastructure</tspan></text>
+
+
+
+<text
+   transform="matrix(1,0,0,-1,118.2872,99.797079)"
+   style="font-variant:normal;font-weight:normal;font-size:30px;font-family:'DejaVu Sans';-inkscape-font-specification:DejaVuSans;writing-mode:lr-tb;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none"
+   id="text942"
+   y="0"><tspan
+     x="0 22.529999 40.259998 59.279999 77.729996 90.059998 107.78999 116.1 131.7 150.03"
+     y="0"
+     sodipodi:role="line"
+     id="tspan940">Hypervisor</tspan></text>
+
+
+
+<path
+   d="M 0,296.92103 H 196.80569 V 222.2251 H 0 Z"
+   style="fill:#00bcd4;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.0461762"
+   id="path944"
+   inkscape:connector-curvature="0" />
+
+
+<path
+   d="M 0,335.19275 H 196.80569 V 296.92103 H 0 Z"
+   style="fill:#2196f3;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.0461762"
+   id="path954"
+   inkscape:connector-curvature="0" /><text
+   transform="scale(1,-1)"
+   style="font-variant:normal;font-weight:normal;font-size:30px;font-family:'DejaVu Sans';-inkscape-font-specification:DejaVuSans;writing-mode:lr-tb;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none"
+   id="text958"
+   x="15.76176"
+   y="-307.78052"><tspan
+     x="15.76176 36.281757 55.301758"
+     y="-307.78052"
+     sodipodi:role="line"
+     id="tspan956">Application</tspan></text>
+
+
+
+<g
+   id="g960"
+   transform="matrix(1.5224862,0,0,-0.7188798,0,412.61849)"
+   style="stroke:#ffffff"><path
+     d="M 0.5,0.5 H 129.387 V 264.848 H 0.5 Z"
+     style="fill:none;stroke:#ffffff;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+     id="path962"
+     inkscape:connector-curvature="0" /></g><text
+   transform="scale(1,-1)"
+   style="font-variant:normal;font-weight:normal;font-size:30px;font-family:'DejaVu Sans';-inkscape-font-specification:DejaVuSans;writing-mode:lr-tb;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none"
+   id="text972"
+   x="48.764336"
+   y="-381.99225"><tspan
+     x="48.764336 68.624336 76.934334 89.264336 101.02434 120.01434 138.37433"
+     y="-381.99225"
+     sodipodi:role="line"
+     id="tspan964">Virtual</tspan><tspan
+     x="34.965508 60.825504 79.185501 95.655502 114.7355 123.0455 142.03549"
+     y="-344.49225"
+     sodipodi:role="line"
+     id="tspan966">Machine</tspan><tspan
+     sodipodi:role="line"
+     id="tspan968"
+     x="48.764336"
+     y="0" /><tspan
+     sodipodi:role="line"
+     id="tspan970"
+     x="48.764336"
+     y="0" /><tspan
+     sodipodi:role="line"
+     x="48.764336"
+     y="0"
+     id="tspan1513" /></text>
+
+
+
+
+
+
+
+
+<text
+   y="-266.73126"
+   x="98.695816"
+   id="text846"
+   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:20px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none"
+   transform="scale(1,-1)"><tspan
+     sodipodi:role="line"
+     id="tspan848"
+     x="98.695816"
+     y="-266.73126">Guest</tspan><tspan
+     sodipodi:role="line"
+     id="tspan850"
+     x="98.695816"
+     y="-241.73126">Operating System</tspan></text>
+</g><path
+   d="M 0,142.54617 H 402.086 V 73.601167 H 0 Z"
+   style="fill:#00bcd4;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.99999994"
+   id="path852"
+   inkscape:connector-curvature="0" /><text
+   y="-99.797302"
+   x="26.363443"
+   style="font-variant:normal;font-weight:normal;font-size:30px;font-family:'DejaVu Sans';-inkscape-font-specification:DejaVuSans;writing-mode:lr-tb;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1"
+   id="text856"
+   transform="scale(1,-1)"><tspan
+     style="stroke-width:1"
+     x="26.363443 48.89344 67.223442 82.823441 94.58345 104.09344 127.70344 146.72343 165.17345 177.50345 195.86345 207.71344 216.02342 235.01343 254.03345 263.54343 282.56342 300.29343 315.89346 327.65344 346.10342"
+     y="-99.797302"
+     sodipodi:role="line"
+     id="tspan854">Host Operating System</tspan></text>
+
+
+<path
+   d="m 0,216.14734 h 197.02214 v -68.945 H 0 Z"
+   style="fill:#2196f3;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.69999999"
+   id="path864"
+   inkscape:connector-curvature="0" /><text
+   y="-173.39847"
+   x="15.75473"
+   style="font-variant:normal;font-weight:normal;font-size:30px;font-family:'DejaVu Sans';-inkscape-font-specification:DejaVuSans;writing-mode:lr-tb;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1"
+   id="text868"
+   transform="scale(1,-1)"><tspan
+     style="stroke-width:1"
+     sodipodi:role="line"
+     id="tspan866"
+     x="15.75473"
+     y="-173.39847">Hypervisor</tspan></text>
+
+
+<path
+   inkscape:connector-curvature="0"
+   id="path1507"
+   style="fill:#2196f3;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.69999999"
+   d="M 205.06386,216.14734 H 402.086 v -68.945 H 205.06386 Z" /><text
+   transform="scale(1,-1)"
+   id="text1511"
+   style="font-variant:normal;font-weight:normal;font-size:30px;font-family:'DejaVu Sans';-inkscape-font-specification:DejaVuSans;writing-mode:lr-tb;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1"
+   x="220.92845"
+   y="-173.39847"><tspan
+     y="-173.39847"
+     x="220.92845"
+     id="tspan1509"
+     sodipodi:role="line"
+     style="stroke-width:1">Application</tspan></text>
+
+
+</g></svg>
