@@ -1,0 +1,219 @@
+\newif \ifshare
+% \sharetrue % Comment this if you want animation
+\ifshare % "Share mode" without animation.
+\documentclass[table, trans, aspectratio = 169]{beamer}
+\else % "Presentation mode" with animation.
+\documentclass[table, aspectratio = 169]{beamer}
+\fi
+\usepackage[T1]{fontenc}
+\usepackage{color}
+\usepackage{graphicx}
+\usepackage{subfig}
+\usepackage{diagbox}
+\usepackage{amssymb}% http://ctan.org/pkg/amssymb
+\usepackage{pifont}% http://ctan.org/pkg/pifont
+\newcommand{\cmark}{\ding{51}}%
+\newcommand{\xmark}{\ding{55}}%
+
+% \pdfsuppresswarningpagegroup=1
+
+\let\pgfmathMod=\pgfmathmod\relax
+
+\graphicspath{{../figs/PDF/}}
+
+\usetheme{Boadilla}
+
+\definecolor{struct}{HTML}{f72e5c}
+\definecolor{alert}{HTML}{f44336}
+\definecolor{example}{HTML}{aeea00}
+\definecolor{good}{HTML}{8bc34a}
+\definecolor{notgoodnotbad}{HTML}{ff9800}
+
+\setbeamercolor{structure}{fg = struct}
+\setbeamercolor{normal text}{fg = white, bg = black}
+\setbeamercolor{example text}{fg = example}
+\setbeamercolor{alerted text}{fg = alert}
+\setbeamercolor{footline}{fg = white}
+
+\title[CiliumCon NA 2023]{Adding \texttt{\_\_kconfig} Support to Cilium/eBPF}
+\subtitle{CiliumCon NA 2023}
+\author[Francis Laniel (\texttt{flaniel@linux.microsoft.com})]{Francis Laniel\\\texttt{flaniel@linux.microsoft.com}}
+\date{6th November 2023}
+
+% Custom title page.
+\defbeamertemplate*{title page}{customized}[1][]{
+	\centering
+	\usebeamerfont{title}\usebeamercolor[fg]{title}\inserttitle\par
+	\usebeamerfont{subtitle}\usebeamercolor[fg]{subtitle}\insertsubtitle\par
+	\bigskip
+	\usebeamerfont{author}\usebeamercolor[fg]{normal text}\textbf{\insertauthor}\par
+	\bigskip
+	\usebeamerfont{date}\usebeamercolor[fg]{normal text}\textbf{\insertdate}\par
+	\bigskip
+	\bigskip
+
+	\begin{columns}
+		\begin{column}{.5\textwidth}
+			\centering
+
+			\includegraphics[scale=2]{microsoft.pdf}
+		\end{column}
+		\begin{column}{.5\textwidth}
+			\centering
+
+			\includegraphics[scale=.25]{inspektor_gadget.pdf}
+		\end{column}
+	\end{columns}
+}
+
+\begin{document}
+	% Put these parameters here to avoid compilation error:
+	% "! LaTeX Error: Missing \begin{document}."
+	% Remove the navigation bar, this is useless...
+	\setbeamertemplate{navigation symbols}{}
+	% Use square instead of bubbles, see:
+	% https://tex.stackexchange.com/a/69721
+	\setbeamertemplate{section in toc}[square]
+	% Modify the shaded value to 60% instead of 20%, see:
+	% https://tex.stackexchange.com/a/66703
+	\setbeamertemplate{sections/subsections in toc shaded}[default][50]
+	% Use circle instead of bubbles for itemize, see:
+	% \setbeamertemplate{itemize items}[circle]
+	\setbeamertemplate{itemize items}[square]
+	\setbeamertemplate{enumerate items}[square]
+
+	\maketitle
+
+	\section{Introduction}
+	\begin{frame}
+		\frametitle{eBPF, \texttt{libbpf} and \texttt{cilium/ebpf}}
+
+		According to Brendan Gregg \cite{gregg_learn_2019}:
+		\begin{quote}
+			eBPF does to Linux what JavaScript does to HTML.
+			[...]
+			And with eBPF, [...], you can now write mini programs that run on events like disk I/O, which are run in a safe virtual machine in the kernel.
+		\end{quote}
+
+		\onslide<2->{
+			\texttt{libbpf}, which is written in \texttt{C}, handles \cite{libbpf_contributors_libbpf_nodate}:
+			\begin{enumerate}
+				\item loading,
+				\item verifying
+				\item and attaching BPF programs to kernel hooks
+			\end{enumerate}
+
+			\texttt{cilium/ebpf} is the \texttt{golang} counterpart to \texttt{libbpf} \cite{cilium_contributors_ciliumebpf_nodate}.
+		}
+	\end{frame}
+
+	\section{Problem}
+	\begin{frame}[fragile]
+		\frametitle{\texttt{\_\_kconfig}}
+
+		An example in kernel source code \cite{song_selftestsbpf_2020}:
+		\begin{verbatim}
+			extern unsigned CONFIG_HZ __kconfig;
+
+			/* ... */
+
+			u64 tick_nsec = (NSEC_PER_SEC + CONFIG_HZ/2) / CONFIG_HZ;
+		\end{verbatim}
+
+		\onslide<2->{
+			It is supported in:
+			\begin{itemize}
+				\item[\cmark] \texttt{libbpf}
+				\item[\xmark] \texttt{cilium/ebpf}, you need workarounds:
+				\begin{itemize}
+					\item Adding a \texttt{bool} eBPF parameter.
+					\item Using \texttt{#ifdef} and having two eBPF bytecodes.
+				\end{itemize}
+			\end{itemize}
+		}
+	\end{frame}
+
+	\section{Solution}
+	\begin{frame}
+		\frametitle{Adding \texttt{\_\_kconfig} support to \texttt{cilium/ebpf}}
+
+		\centering
+
+		\includegraphics<1>[scale=3]{kconfig-fig1.pdf}%
+		\includegraphics<2>[scale=3]{kconfig-fig2.pdf}%
+		\includegraphics<3>[scale=3]{kconfig-fig3.pdf}%
+		\includegraphics<4>[scale=3]{kconfig-fig4.pdf}%
+		\includegraphics<5>[scale=3]{kconfig-fig5.pdf}%
+		\includegraphics<6>[scale=3]{kconfig-fig6.pdf}%
+		\includegraphics<7>[scale=3]{kconfig-fig7.pdf}%
+		\includegraphics<8>[scale=3]{kconfig-fig8.pdf}%
+	\end{frame}
+
+	\begin{frame}[fragile, t]
+		\frametitle{Example}
+
+		The \texttt{profile block-io} gadget \cite{laniel_pkggadgets_2022, laniel_pkggadgets_2023}:
+
+		\bigskip
+
+		\begin{columns}[T]
+			\begin{column}{.5\textwidth}
+				Before:
+
+				{\scriptsize
+					\begin{verbatim}
+
+
+
+
+						#ifdef KERNEL_BEFORE_5_11
+						  return trace_rq_start((void *)ctx[1], false);
+						#else /* !KERNEL_BEFORE_5_11 */
+						  return trace_rq_start((void *)ctx[0], false);
+						#endif /* !KERNEL_BEFORE_5_11 */
+					\end{verbatim}
+				}
+			\end{column}
+			\begin{column}{.5\textwidth}<2->
+				After:
+
+				{\scriptsize
+					\begin{verbatim}
+						extern int LINUX_KERNEL_VERSION __kconfig;
+
+						/* ... */
+
+						if (LINUX_KERNEL_VERSION < KERNEL_VERSION(5, 11, 0))
+						  return trace_rq_start((void *)ctx[1], false);
+						else
+						  return trace_rq_start((void *)ctx[0], false);
+					\end{verbatim}
+				}
+			\end{column}
+		\end{columns}
+
+	\end{frame}
+
+	\section{Conclusion}
+	\begin{frame}
+		\frametitle{Conclusion}
+		\begin{enumerate}
+			\item \texttt{\_\_kconfig} support was added to \texttt{cilium/ebpf} \texttt{v0.11.0} \cite{cilium_contributors_ciliumebpf_nodate-1}.
+			\item You can use it to modify eBPF programs behavior at runtime rather than using workarounds.
+		\end{enumerate}
+
+		\bigskip
+
+		\textcolor{structure}{I would like to thank Lorenz Bauer and Timo Beckers for their suggestions and reviews!}
+	\end{frame}
+
+	\begin{frame}[allowframebreaks, noframenumbering]
+		\frametitle{Bibliography}
+		\setbeamertemplate{bibliography item}[text]
+
+		\begin{scriptsize}
+			\bibliographystyle{IEEEtran}
+			\bibliography{beamer}
+		\end{scriptsize}
+	\end{frame}
+\end{document}
